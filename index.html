@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MandiBandhu - AI-powered negotiation assistant for Indian local market vendors">
+    <title>MandiBandhu - AI Negotiation Assistant for Vendors</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* Simplified Results Styling */
+        .simple-results {
+            padding: 2rem;
+        }
+        
+        .product-info {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .product-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .product-info-item i {
+            color: #FF6B35;
+        }
+        
+        .price-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .price-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .price-card h4 {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .price-card .price-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .price-card.your-price {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .price-card.market-price {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .price-card.suggested-price {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .response-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 2rem;
+        }
+        
+        .response-section h3 {
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .response-text {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .copy-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">🤝</div>
+                <div class="brand">
+                    <h1>MandiBandhu</h1>
+                    <p class="tagline" id="tagline">Your Market Companion</p>
+                </div>
+            </div>
+            <div class="language-selector">
+                <button class="lang-btn active" onclick="changeLanguage('en')" data-lang="en">English</button>
+                <button class="lang-btn" onclick="changeLanguage('hi')" data-lang="hi">हिंदी</button>
+                <button class="lang-btn" onclick="changeLanguage('kn')" data-lang="kn">ಕನ್ನಡ</button>
+                <button class="lang-btn" onclick="changeLanguage('ta')" data-lang="ta">தமிழ்</button>
+                <button class="lang-btn" onclick="changeLanguage('te')" data-lang="te">తెలుగు</button>
+                <button class="lang-btn" onclick="changeLanguage('mr')" data-lang="mr">मराठी</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats Dashboard -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <i class="fas fa-shield-alt"></i>
+                <div class="stat-content">
+                    <h3 id="protectedCount">1247</h3>
+                    <p>Vendors Protected</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="stat-content">
+                    <h3 id="avgIncrease">23%</h3>
+                    <p>Avg. Price Improvement</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-language"></i>
+                <div class="stat-content">
+                    <h3>6</h3>
+                    <p>Languages Supported</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="main-grid">
+            <!-- Left Panel - Input Section -->
+            <div class="input-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-comments"></i> Vendor Input</h2>
+                    <p>Enter buyer's offer or speak in your language</p>
+                </div>
+
+                <!-- Context Selection -->
+                <div class="context-section">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Location</label>
+                        <select id="location" class="input-field">
+                            <option value="">Select Location</option>
+                            <option value="delhi">Delhi</option>
+                            <option value="bangalore">Bangalore</option>
+                            <option value="mumbai">Mumbai</option>
+                            <option value="kolkata">Kolkata</option>
+                            <option value="chennai">Chennai</option>
+                            <option value="pune">Pune</option>
+                            <option value="hyderabad">Hyderabad</option>
+                            <option value="ahmedabad">Ahmedabad</option>
+                            <option value="jaipur">Jaipur</option>
+                            <option value="lucknow">Lucknow</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Season</label>
+                        <select id="season" class="input-field">
+                            <option value="summer">Summer (March-June)</option>
+                            <option value="monsoon">Monsoon (July-September)</option>
+                            <option value="autumn">Autumn (October-November)</option>
+                            <option value="winter">Winter (December-February)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-leaf"></i> Product Category & Type</label>
+                        <select id="productType" class="input-field">
+                            <optgroup label="🥬 Vegetables">
+                                <option value="tomato">Tomato (टमाटर)</option>
+                                <option value="onion">Onion (प्याज)</option>
+                                <option value="potato">Potato (आलू)</option>
+                                <option value="cabbage">Cabbage (पत्तागोभी)</option>
+                                <option value="carrot">Carrot (गाजर)</option>
+                                <option value="cauliflower">Cauliflower (फूलगोभी)</option>
+                                <option value="brinjal">Brinjal (बैंगन)</option>
+                                <option value="ladyfinger">Lady Finger (भिंडी)</option>
+                            </optgroup>
+                            <optgroup label="🍎 Fruits">
+                                <option value="apple">Apple (सेब)</option>
+                                <option value="banana">Banana (केला)</option>
+                                <option value="mango">Mango (आम)</option>
+                                <option value="orange">Orange (संतरा)</option>
+                                <option value="grapes">Grapes (अंगूर)</option>
+                                <option value="pomegranate">Pomegranate (अनार)</option>
+                                <option value="papaya">Papaya (पपीता)</option>
+                            </optgroup>
+                            <optgroup label="🌿 Leafy Greens">
+                                <option value="spinach">Spinach (पालक)</option>
+                                <option value="coriander">Coriander (धनिया)</option>
+                                <option value="mint">Mint (पुदीना)</option>
+                                <option value="fenugreek">Fenugreek (मेथी)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Voice/Text Input -->
+                <div class="input-section">
+                    <label><i class="fas fa-comment-dots"></i> Buyer's Offer</label>
+                    <textarea 
+                        id="vendorInput" 
+                        class="text-input" 
+                        rows="4" 
+                        placeholder="Example: I'll give you 100 per kg"></textarea>
+                    
+                    <div class="input-actions">
+                        <button class="voice-btn" id="voiceBtn" onclick="handleVoiceInput()">
+                            <i class="fas fa-microphone"></i> Voice Input
+                        </button>
+                        <button class="analyze-btn" id="analyzeBtn" onclick="handleAnalyze()">
+                            <i class="fas fa-brain"></i> Analyze Offer
+                        </button>
+                    </div>
+                    
+                    <div class="examples-section">
+                        <p class="examples-title">Quick Examples:</p>
+                        <button class="example-chip" onclick="loadExample('en')">English</button>
+                        <button class="example-chip" onclick="loadExample('hi')">हिंदी</button>
+                        <button class="example-chip" onclick="loadExample('kn')">ಕನ್ನಡ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Simplified Analysis & Results -->
+            <div class="results-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-chart-bar"></i> Quick Analysis</h2>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state hidden">
+                    <div class="spinner"></div>
+                    <p>Analyzing offer...</p>
+                </div>
+
+                <!-- Simplified Results Content -->
+                <div id="resultsContent" class="simple-results hidden">
+                    
+                    <!-- Product Info -->
+                    <div class="product-info">
+                        <div class="product-info-item">
+                            <i class="fas fa-box"></i>
+                            <span><strong id="productLabel">Product:</strong> <span id="detectedProduct"></span></span>
+                        </div>
+                        <div class="product-info-item">
+                            <i class="fas fa-weight"></i>
+                            <span><strong id="quantityLabel">Quantity:</strong> <span id="detectedQuantity"></span></span>
+                        </div>
+                        <div class="product-info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span><strong id="locationLabel">Location:</strong> <span id="detectedLocation"></span></span>
+                        </div>
+                    </div>
+
+                    <!-- Main Recommendation -->
+                    <div id="recommendation" class="recommendation"></div>
+
+                    <!-- Price Comparison -->
+                    <div class="price-comparison-grid">
+                        <div class="price-card your-price">
+                            <h4><i class="fas fa-hand-holding-usd"></i> <span id="yourPriceLabel">Your Offered Price</span></h4>
+                            <div class="price-value" id="offeredPriceValue">₹0</div>
+                            <small id="perKg1">per kg</small>
+                        </div>
+                        
+                        <div class="price-card market-price">
+                            <h4><i class="fas fa-store"></i> <span id="marketPriceLabel">Market Price</span></h4>
+                            <div class="price-value" id="marketPriceValue">₹0</div>
+                            <small id="perKg2">per kg (fair value)</small>
+                        </div>
+                        
+                        <div class="price-card suggested-price">
+                            <h4><i class="fas fa-lightbulb"></i> <span id="suggestedPriceLabel">Suggested Price</span></h4>
+                            <div class="price-value" id="suggestedPriceValue">₹0</div>
+                            <small id="perKg3">per kg (to negotiate)</small>
+                        </div>
+                    </div>
+
+                    <!-- Price Difference -->
+                    <div style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">
+                        <strong id="differenceLabel">Difference from market:</strong> <span id="priceDifferenceValue"></span>
+                    </div>
+
+                    <!-- Response Suggestion -->
+                    <div class="response-section">
+                        <h3 id="whatToSayLabel"><i class="fas fa-comments"></i> What to Say:</h3>
+                        <div class="response-text" id="responseSuggestion"></div>
+                        <button class="copy-btn" id="copyBtn" onclick="copyResponse()">
+                            <i class="fas fa-copy"></i> Copy Response
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Ready to Analyze</h3>
+                    <p>Enter buyer's offer and click "Analyze Offer" to get instant recommendation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>MandiBandhu © 2026 | Empowering Indian Vendors with Fair Trade Intelligence</p>
+        <p class="footer-note">Built with ❤️ for Bharat's Vendors</p>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="js/translations.js"></script>
+    <script src="js/marketData.js"></script>
+    <script src="js/negotiationEngine.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
